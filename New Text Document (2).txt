@@ -1,0 +1,19 @@
+import sqlite3
+
+conn = sqlite3.connect("athletes.db")
+
+cur = conn.cursor()
+
+cur.execute("""
+CREATE TABLE IF NOT EXISTS athletes (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
+    role TEXT,
+    department TEXT
+)
+""")
+
+conn.commit()
+conn.close()
+
+print("Database Created Successfully!")

@@ -1,0 +1,52 @@
+from flask import Flask, render_template, request, jsonify
+import sqlite3
+
+app = Flask(__name__)
+
+def get_db():
+    conn = sqlite3.connect("athletes.db")
+    conn.row_factory = sqlite3.Row
+    return conn
+
+@app.route("/")
+def home():
+    return render_template("index.html")
+
+@app.route("/athletes", methods=["GET"])
+def get_athletes():
+
+    conn = get_db()
+    athletes = conn.execute(
+        "SELECT * FROM athletes"
+    ).fetchall()
+    conn.close()
+
+    return jsonify([dict(a) for a in athletes])
+
+@app.route("/athletes", methods=["POST"])
+def add_athlete():
+
+    data = request.json
+
+    conn = get_db()
+
+    conn.execute(
+        """
+        INSERT INTO athletes
+        (name, role, department)
+        VALUES (?, ?, ?)
+        """,
+        (
+            data["name"],
+            data["role"],
+            data["department"]
+        )
+    )
+
+    conn.commit()
+    conn.close()
+
+    return jsonify({"status": "success"})
+
+if __name__ == "__main__":
+    app.run(debug=True)

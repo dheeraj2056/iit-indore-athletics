@@ -1,0 +1,735 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>IIT Indore Athletics Club</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --gold:#C8922A;--gold-light:#F5E6C8;--gold-dark:#8B6218;
+  --ink:#0D0D0D;--ink2:#2A2A2A;--ink3:#5A5A5A;
+  --surface:#F7F4EE;--surface2:#EDE8DE;--surface3:#fff;
+  --red:#C0392B;--green:#1A6B3C;--blue:#1A3A6B;
+  --border:#D4C9AA;
+}
+body{font-family:'DM Sans',sans-serif;background:var(--surface);color:var(--ink);min-height:100vh;font-size:15px}
+h1,h2,h3,h4{font-family:'Oswald',sans-serif;font-weight:600;letter-spacing:0.02em}
+
+.topbar{background:var(--ink);color:#fff;padding:0 24px;display:flex;align-items:center;gap:20px;height:56px;position:sticky;top:0;z-index:100}
+.topbar .logo{font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;color:var(--gold);white-space:nowrap;letter-spacing:0.05em}
+.topbar .logo span{color:#fff;font-weight:400}
+.nav-tabs{display:flex;gap:4px;flex:1;overflow-x:auto}
+.nav-tab{padding:6px 14px;border-radius:4px;cursor:pointer;font-size:13px;color:#aaa;background:transparent;border:none;font-family:'DM Sans',sans-serif;white-space:nowrap;transition:all .2s}
+.nav-tab:hover{color:#fff;background:rgba(255,255,255,.08)}
+.nav-tab.active{color:var(--gold);background:rgba(200,146,42,.12);font-weight:500}
+.topbar-actions{display:flex;gap:8px;align-items:center}
+
+.page{display:none;padding:24px;max-width:1100px;margin:0 auto}
+.page.active{display:block}
+
+.hero{background:var(--ink);color:#fff;border-radius:10px;padding:28px 32px;margin-bottom:24px;display:flex;align-items:center;gap:24px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;right:0;top:0;bottom:0;width:280px;background:linear-gradient(90deg,transparent,rgba(200,146,42,.08));pointer-events:none}
+.hero-emblem{width:64px;height:64px;border:2px solid var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-size:22px;color:var(--gold);flex-shrink:0}
+.hero-text h2{font-size:26px;color:var(--gold);margin-bottom:4px}
+.hero-text p{color:#aaa;font-size:14px}
+.stats-row{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:24px}
+.stat-card{background:var(--surface3);border:1px solid var(--border);border-radius:8px;padding:16px;text-align:center}
+.stat-card .num{font-family:'Oswald',sans-serif;font-size:28px;font-weight:700;color:var(--gold)}
+.stat-card .lbl{font-size:12px;color:var(--ink3);margin-top:2px;text-transform:uppercase;letter-spacing:.05em}
+
+.section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px}
+.section-title{font-size:18px;font-family:'Oswald',sans-serif;font-weight:600;color:var(--ink)}
+.filter-row{display:flex;gap:8px;margin-bottom:16px;flex-wrap:wrap}
+.filter-btn{padding:6px 14px;border:1px solid var(--border);border-radius:20px;background:transparent;cursor:pointer;font-size:13px;color:var(--ink3);transition:all .15s;font-family:'DM Sans',sans-serif}
+.filter-btn.active{background:var(--gold);border-color:var(--gold);color:#fff;font-weight:500}
+.search-input{padding:8px 14px;border:1px solid var(--border);border-radius:6px;font-size:14px;background:var(--surface3);color:var(--ink);font-family:'DM Sans',sans-serif;min-width:220px}
+.search-input:focus{outline:none;border-color:var(--gold)}
+.member-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:14px}
+.member-card{background:var(--surface3);border:1px solid var(--border);border-radius:10px;padding:18px;cursor:pointer;transition:all .2s;position:relative}
+.member-card:hover{border-color:var(--gold);transform:translateY(-1px)}
+.member-card .role-badge{position:absolute;top:14px;right:14px;font-size:11px;padding:3px 8px;border-radius:12px;font-weight:500;text-transform:uppercase;letter-spacing:.04em}
+.role-senior{background:#FFF3CD;color:#856404}
+.role-member{background:#D1ECF1;color:#0C5460}
+.role-volunteer{background:#D4EDDA;color:#155724}
+.avatar{width:44px;height:44px;border-radius:50%;background:var(--gold-light);display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-size:16px;font-weight:600;color:var(--gold-dark);margin-bottom:12px;border:2px solid var(--border)}
+.member-card h4{font-size:15px;font-weight:500;margin-bottom:2px;color:var(--ink);font-family:'Oswald',sans-serif}
+.member-card .sub{font-size:12px;color:var(--ink3);margin-bottom:10px}
+.score-bar{height:6px;background:var(--surface2);border-radius:3px;overflow:hidden;margin:8px 0}
+.score-fill{height:100%;border-radius:3px;background:linear-gradient(90deg,var(--gold-dark),var(--gold));transition:width .5s}
+.score-row{display:flex;justify-content:space-between;align-items:center}
+.score-val{font-family:'Oswald',sans-serif;font-size:18px;font-weight:600;color:var(--gold)}
+.score-lbl{font-size:11px;color:var(--ink3)}
+.event-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:8px}
+.event-tag{font-size:11px;padding:2px 7px;background:var(--surface2);border-radius:4px;color:var(--ink3)}
+
+.modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:200;align-items:center;justify-content:center;padding:16px}
+.modal-overlay.open{display:flex}
+.modal{background:var(--surface3);border-radius:12px;max-width:720px;width:100%;max-height:90vh;overflow-y:auto;position:relative}
+.modal-header{background:var(--ink);color:#fff;padding:20px 24px;border-radius:12px 12px 0 0;display:flex;justify-content:space-between;align-items:center}
+.modal-header h3{font-family:'Oswald',sans-serif;font-size:20px;color:var(--gold)}
+.modal-close{background:none;border:none;color:#aaa;font-size:22px;cursor:pointer;line-height:1;padding:4px}
+.modal-close:hover{color:#fff}
+.modal-body{padding:24px}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.form-group{display:flex;flex-direction:column;gap:5px}
+.form-group.full{grid-column:1/-1}
+label{font-size:12px;font-weight:500;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em}
+input,select,textarea{padding:9px 12px;border:1px solid var(--border);border-radius:6px;font-size:14px;background:var(--surface);color:var(--ink);font-family:'DM Sans',sans-serif;transition:border-color .15s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--gold)}
+textarea{resize:vertical;min-height:60px}
+.section-sep{border:none;border-top:1px solid var(--border);margin:20px 0}
+.section-label{font-family:'Oswald',sans-serif;font-size:14px;letter-spacing:.05em;color:var(--ink3);margin-bottom:12px;text-transform:uppercase}
+.btn{padding:9px 18px;border-radius:6px;font-size:14px;font-weight:500;cursor:pointer;border:none;font-family:'DM Sans',sans-serif;transition:all .2s}
+.btn-primary{background:var(--gold);color:#fff}
+.btn-primary:hover{background:var(--gold-dark)}
+.btn-secondary{background:transparent;border:1px solid var(--border);color:var(--ink)}
+.btn-secondary:hover{border-color:var(--gold);color:var(--gold)}
+.btn-danger{background:var(--red);color:#fff}
+.btn-row{display:flex;gap:8px;justify-content:flex-end;margin-top:20px}
+
+.metric-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:16px}
+.metric-card{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:14px}
+.metric-card label{font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:.04em;margin-bottom:6px;display:block}
+.metric-input-row{display:flex;align-items:center;gap:8px}
+.metric-input-row input{flex:1}
+.metric-unit{font-size:12px;color:var(--ink3);white-space:nowrap}
+
+.leaderboard{background:var(--surface3);border:1px solid var(--border);border-radius:10px;overflow:hidden}
+.lb-row{display:grid;grid-template-columns:40px 1fr 80px 80px 80px;gap:0;align-items:center;padding:12px 16px;border-bottom:1px solid var(--surface2);cursor:pointer}
+.lb-row:last-child{border-bottom:none}
+.lb-row.header{background:var(--ink);color:#fff;font-size:12px;text-transform:uppercase;letter-spacing:.05em;font-weight:500;padding:10px 16px;cursor:default}
+.lb-row.top1{background:#FFF8E7}
+.lb-row.top2{background:#F7F7F7}
+.lb-row.top3{background:#FFF2EC}
+.rank{font-family:'Oswald',sans-serif;font-size:18px;font-weight:700;color:var(--ink3);text-align:center}
+.rank.r1{color:#C8922A}
+.rank.r2{color:#888}
+.rank.r3{color:#B87333}
+.lb-name{font-weight:500;font-size:14px}
+.lb-sub{font-size:12px;color:var(--ink3)}
+.lb-score{font-family:'Oswald',sans-serif;font-size:16px;font-weight:600;text-align:center}
+
+.detail-hero{background:var(--ink);border-radius:10px;padding:24px;margin-bottom:20px;display:flex;gap:20px;align-items:center}
+.detail-avatar{width:72px;height:72px;border-radius:50%;background:var(--gold-light);display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-size:26px;font-weight:700;color:var(--gold-dark);border:3px solid var(--gold);flex-shrink:0}
+.detail-info h2{font-family:'Oswald',sans-serif;font-size:24px;color:#fff}
+.detail-info .sub{color:#aaa;font-size:14px;margin-top:2px}
+.detail-meta{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.meta-item{background:var(--surface3);border:1px solid var(--border);border-radius:8px;padding:12px}
+.meta-item .key{font-size:11px;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px}
+.meta-item .val{font-size:15px;font-weight:500;color:var(--ink)}
+.radar-container{background:var(--surface3);border:1px solid var(--border);border-radius:10px;padding:20px;margin-bottom:20px}
+.radar-title{font-family:'Oswald',sans-serif;font-size:14px;letter-spacing:.05em;color:var(--ink3);margin-bottom:16px;text-transform:uppercase}
+.metric-bars{display:grid;gap:10px}
+.metric-bar-row{display:grid;grid-template-columns:140px 1fr 48px;align-items:center;gap:10px}
+.metric-bar-label{font-size:13px;color:var(--ink3)}
+.metric-bar-track{height:8px;background:var(--surface2);border-radius:4px;overflow:hidden}
+.metric-bar-fill{height:100%;border-radius:4px;background:var(--gold);transition:width .6s}
+.metric-bar-score{font-family:'Oswald',sans-serif;font-size:14px;font-weight:600;color:var(--ink);text-align:right}
+.overall-badge{background:var(--ink);color:var(--gold);font-family:'Oswald',sans-serif;font-size:42px;font-weight:700;width:100px;height:100px;border-radius:50%;display:flex;align-items:center;justify-content:center;border:3px solid var(--gold);flex-shrink:0;position:relative}
+.overall-badge .out{position:absolute;bottom:-6px;font-size:11px;color:var(--ink3);font-family:'DM Sans',sans-serif;background:var(--surface3);padding:0 6px;border-radius:4px;white-space:nowrap}
+.history-list{list-style:none;display:flex;flex-direction:column;gap:10px}
+.history-item{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center}
+.history-date{font-size:12px;color:var(--ink3)}
+.history-score{font-family:'Oswald',sans-serif;font-size:18px;color:var(--gold)}
+.empty-state{text-align:center;padding:40px;color:var(--ink3)}
+.empty-state .icon{font-size:48px;margin-bottom:12px;color:var(--border)}
+
+.inner-tabs{display:flex;gap:0;border-bottom:1px solid var(--border);margin:-24px -24px 20px}
+.inner-tab{padding:12px 18px;font-size:13px;color:var(--ink3);cursor:pointer;border-bottom:2px solid transparent;transition:all .15s}
+.inner-tab.active{color:var(--gold);border-bottom-color:var(--gold);font-weight:500}
+
+#toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(80px);background:var(--ink);color:#fff;padding:10px 20px;border-radius:8px;font-size:14px;transition:transform .3s;z-index:999}
+
+@media(max-width:600px){
+  .form-grid{grid-template-columns:1fr}
+  .stats-row{grid-template-columns:1fr 1fr}
+  .metric-grid{grid-template-columns:1fr}
+  .lb-row{grid-template-columns:30px 1fr 60px}
+}
+</style>
+</head>
+<body>
+
+<div class="topbar">
+  <div class="logo">IITI <span>Athletics</span></div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('dashboard',this)">Dashboard</button>
+    <button class="nav-tab" onclick="showPage('members',this)">Athletes</button>
+    <button class="nav-tab" onclick="showPage('assess',this)">Assessment</button>
+    <button class="nav-tab" onclick="showPage('leaderboard',this)">Leaderboard</button>
+  </div>
+  <div class="topbar-actions">
+    <button class="btn btn-primary" onclick="openAddMember()">+ Add Athlete</button>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div class="page active" id="page-dashboard">
+  <div class="hero">
+    <div class="hero-emblem">AC</div>
+    <div class="hero-text">
+      <h2>Athletics Club</h2>
+      <p>IIT Indore · Season 2025–26</p>
+    </div>
+  </div>
+  <div class="stats-row">
+    <div class="stat-card"><div class="num" id="stat-total">0</div><div class="lbl">Total Athletes</div></div>
+    <div class="stat-card"><div class="num" id="stat-senior">0</div><div class="lbl">Senior Members</div></div>
+    <div class="stat-card"><div class="num" id="stat-member">0</div><div class="lbl">Members</div></div>
+    <div class="stat-card"><div class="num" id="stat-volunteer">0</div><div class="lbl">Volunteers</div></div>
+  </div>
+  <div class="section-header"><div class="section-title">Top Performers</div></div>
+  <div id="dash-top" class="member-grid"></div>
+</div>
+
+<!-- MEMBERS -->
+<div class="page" id="page-members">
+  <div class="section-header">
+    <div class="section-title">All Athletes</div>
+    <input class="search-input" placeholder="Search by name, event..." id="search-input" oninput="renderMembers()">
+  </div>
+  <div class="filter-row">
+    <button class="filter-btn active" onclick="setFilter('All',this)">All</button>
+    <button class="filter-btn" onclick="setFilter('Senior Member',this)">Senior Members</button>
+    <button class="filter-btn" onclick="setFilter('Member',this)">Members</button>
+    <button class="filter-btn" onclick="setFilter('Volunteer',this)">Volunteers</button>
+  </div>
+  <div class="member-grid" id="members-grid"></div>
+</div>
+
+<!-- ASSESSMENT -->
+<div class="page" id="page-assess">
+  <div class="section-header"><div class="section-title">Record Assessment</div></div>
+  <div style="background:var(--surface3);border:1px solid var(--border);border-radius:10px;padding:24px">
+    <div class="form-grid" style="margin-bottom:20px">
+      <div class="form-group">
+        <label>Select Athlete</label>
+        <select id="assess-athlete"><option value="">— choose athlete —</option></select>
+      </div>
+      <div class="form-group">
+        <label>Assessment Date</label>
+        <input type="date" id="assess-date">
+      </div>
+    </div>
+    <hr class="section-sep">
+    <div class="section-label">Performance Metrics</div>
+    <div class="metric-grid">
+      <div class="metric-card">
+        <label>Acceleration – 30m Sprint</label>
+        <div class="metric-input-row"><input type="number" step="0.01" id="m-acc" placeholder="e.g. 4.25" oninput="previewScore()"><span class="metric-unit">seconds</span></div>
+      </div>
+      <div class="metric-card">
+        <label>Top Speed – Flying 30m</label>
+        <div class="metric-input-row"><input type="number" step="0.01" id="m-spd" placeholder="e.g. 3.10" oninput="previewScore()"><span class="metric-unit">seconds</span></div>
+      </div>
+      <div class="metric-card">
+        <label>Agility – Illinois Test</label>
+        <div class="metric-input-row"><input type="number" step="0.01" id="m-agi" placeholder="e.g. 15.2" oninput="previewScore()"><span class="metric-unit">seconds</span></div>
+      </div>
+      <div class="metric-card">
+        <label>Vertical Jump</label>
+        <div class="metric-input-row"><input type="number" step="0.5" id="m-vj" placeholder="e.g. 65" oninput="previewScore()"><span class="metric-unit">cm</span></div>
+      </div>
+      <div class="metric-card">
+        <label>Standing Broad Jump</label>
+        <div class="metric-input-row"><input type="number" step="0.5" id="m-bj" placeholder="e.g. 2.40" oninput="previewScore()"><span class="metric-unit">m</span></div>
+      </div>
+      <div class="metric-card">
+        <label>Cooper 12-min Run</label>
+        <div class="metric-input-row"><input type="number" step="10" id="m-coop" placeholder="e.g. 2800" oninput="previewScore()"><span class="metric-unit">metres</span></div>
+      </div>
+      <div class="metric-card">
+        <label>5km Run</label>
+        <div class="metric-input-row"><input type="number" step="1" id="m-5km" placeholder="e.g. 1380" oninput="previewScore()"><span class="metric-unit">seconds</span></div>
+      </div>
+      <div class="metric-card">
+        <label>Medicine Ball Throw</label>
+        <div class="metric-input-row"><input type="number" step="0.1" id="m-thr" placeholder="e.g. 8.5" oninput="previewScore()"><span class="metric-unit">metres</span></div>
+      </div>
+      <div class="metric-card" style="grid-column:1/-1">
+        <label>Strength – Body Weight &amp; Weight Lifted</label>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+          <div class="metric-input-row"><input type="number" step="0.5" id="m-wt" placeholder="Body weight kg" oninput="previewScore()"><span class="metric-unit">kg body</span></div>
+          <div class="metric-input-row"><input type="number" step="0.5" id="m-lift" placeholder="Weight lifted kg" oninput="previewScore()"><span class="metric-unit">kg lifted</span></div>
+        </div>
+      </div>
+    </div>
+    <hr class="section-sep">
+    <div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:16px;display:flex;align-items:center;justify-content:space-between">
+      <div>
+        <div style="font-size:12px;color:var(--ink3);text-transform:uppercase;letter-spacing:.05em;margin-bottom:4px">Weighted Overall Rating</div>
+        <div id="preview-breakdown" style="font-size:12px;color:var(--ink3)">Enter metrics above to see breakdown</div>
+      </div>
+      <div id="preview-score" style="font-family:'Oswald',sans-serif;font-size:48px;font-weight:700;color:var(--gold)">—</div>
+    </div>
+    <div class="btn-row">
+      <button class="btn btn-primary" onclick="saveAssessment()">Save Assessment</button>
+    </div>
+  </div>
+</div>
+
+<!-- LEADERBOARD -->
+<div class="page" id="page-leaderboard">
+  <div class="section-header">
+    <div class="section-title">Overall Leaderboard</div>
+    <select id="lb-filter" onchange="renderLeaderboard()" style="padding:7px 12px;border:1px solid var(--border);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;background:var(--surface3)">
+      <option value="All">All Members</option>
+      <option value="Senior Member">Senior Members</option>
+      <option value="Member">Members</option>
+      <option value="Volunteer">Volunteers</option>
+    </select>
+  </div>
+  <div class="leaderboard" id="lb-table"></div>
+</div>
+
+<!-- MODAL: Add / Edit Member -->
+<div class="modal-overlay" id="member-modal">
+  <div class="modal">
+    <div class="modal-header">
+      <h3 id="modal-title">Add Athlete</h3>
+      <button class="modal-close" onclick="closeModal('member-modal')">×</button>
+    </div>
+    <div class="modal-body">
+      <div class="inner-tabs">
+        <div class="inner-tab active" onclick="setInnerTab(0,this)">Profile</div>
+        <div class="inner-tab" onclick="setInnerTab(1,this)">Athletic Info</div>
+      </div>
+      <div id="inner-panel-0">
+        <div class="form-grid">
+          <div class="form-group"><label>Full Name *</label><input id="f-name" placeholder="e.g. Mukul Raj Ghunawat"></div>
+          <div class="form-group">
+            <label>Role *</label>
+            <select id="f-role">
+              <option value="Senior Member">Senior Member</option>
+              <option value="Member">Member</option>
+              <option value="Volunteer">Volunteer</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Date of Birth</label><input type="date" id="f-dob"></div>
+          <div class="form-group"><label>Blood Group</label>
+            <select id="f-blood">
+              <option value="">—</option>
+              <option>A+</option><option>A-</option><option>B+</option><option>B-</option>
+              <option>AB+</option><option>AB-</option><option>O+</option><option>O-</option>
+            </select>
+          </div>
+          <div class="form-group"><label>Height</label><input id="f-height" placeholder="e.g. 5'10&quot;"></div>
+          <div class="form-group"><label>Weight (kg)</label><input type="number" id="f-weight" placeholder="e.g. 70"></div>
+          <div class="form-group"><label>Program</label><input id="f-program" placeholder="e.g. BTech, PhD"></div>
+          <div class="form-group"><label>Department</label><input id="f-dept" placeholder="e.g. Mechanical"></div>
+          <div class="form-group"><label>Contact Number</label><input id="f-phone" placeholder="10-digit number"></div>
+          <div class="form-group"><label>Official Email</label><input id="f-email" placeholder="xx@iiti.ac.in"></div>
+          <div class="form-group"><label>Personal Email</label><input id="f-pemail" placeholder="personal@gmail.com"></div>
+          <div class="form-group"><label>Jersey Name – Number</label><input id="f-jersey" placeholder="e.g. Mukul - 55"></div>
+        </div>
+      </div>
+      <div id="inner-panel-1" style="display:none">
+        <div class="form-grid">
+          <div class="form-group full"><label>Events – Track &amp; Field</label><input id="f-events" placeholder="e.g. Sprinter, Long Jump, High Jump"></div>
+          <div class="form-group full"><label>Competitions Participated</label><textarea id="f-comps" placeholder="List competitions..."></textarea></div>
+          <div class="form-group full"><label>Achievements / PB / PR</label><textarea id="f-achieve" placeholder="Personal bests, records, medals..."></textarea></div>
+          <div class="form-group"><label>Date of Joining</label><input type="date" id="f-join"></div>
+          <div class="form-group"><label>Shoe Size</label><input id="f-shoe" placeholder="e.g. 10 UK"></div>
+          <div class="form-group full"><label>Notes</label><textarea id="f-notes" placeholder="Any other info..."></textarea></div>
+        </div>
+      </div>
+      <div class="btn-row">
+        <button class="btn btn-danger" id="btn-delete" style="display:none;margin-right:auto" onclick="deleteMember()">Delete Athlete</button>
+        <button class="btn btn-secondary" onclick="closeModal('member-modal')">Cancel</button>
+        <button class="btn btn-primary" onclick="saveMember()">Save Athlete</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL: Athlete Detail -->
+<div class="modal-overlay" id="detail-modal">
+  <div class="modal" style="max-width:800px">
+    <div class="modal-header">
+      <h3 id="detail-modal-title">Athlete Profile</h3>
+      <button class="modal-close" onclick="closeModal('detail-modal')">×</button>
+    </div>
+    <div class="modal-body" id="detail-modal-body"></div>
+  </div>
+</div>
+
+<div id="toast"></div>
+
+<script>
+const STORAGE_KEY='iiti_ac_v2';
+let DB={members:[],assessments:[]};
+let editingId=null;
+let filterRole='All';
+
+function loadDB(){try{const s=localStorage.getItem(STORAGE_KEY);if(s)DB=JSON.parse(s)}catch(e){}}
+function saveDB(){try{localStorage.setItem(STORAGE_KEY,JSON.stringify(DB))}catch(e){toast('Storage full – data may not persist');}}
+function uid(){return Date.now().toString(36)+Math.random().toString(36).slice(2,6)}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.style.transform='translateX(-50%) translateY(0)';setTimeout(()=>t.style.transform='translateX(-50%) translateY(80px)',2200)}
+function initials(n){return n.trim().split(' ').map(x=>x[0]).join('').toUpperCase().slice(0,2)}
+
+const WEIGHTS={acc:.15,spd:.15,agi:.10,vj:.10,bj:.10,coop:.15,fkm:.10,thr:.05,str:.10};
+
+function getBests(){
+  const b={acc:null,spd:null,agi:null,vj:null,bj:null,coop:null,fkm:null,thr:null,str:null};
+  DB.assessments.forEach(a=>{
+    if(a.acc&&(b.acc===null||a.acc<b.acc))b.acc=a.acc;
+    if(a.spd&&(b.spd===null||a.spd<b.spd))b.spd=a.spd;
+    if(a.agi&&(b.agi===null||a.agi<b.agi))b.agi=a.agi;
+    if(a.vj&&(b.vj===null||a.vj>b.vj))b.vj=a.vj;
+    if(a.bj&&(b.bj===null||a.bj>b.bj))b.bj=a.bj;
+    if(a.coop&&(b.coop===null||a.coop>b.coop))b.coop=a.coop;
+    if(a.fkm&&(b.fkm===null||a.fkm<b.fkm))b.fkm=a.fkm;
+    if(a.thr&&(b.thr===null||a.thr>b.thr))b.thr=a.thr;
+    if(a.wt&&a.lift){const r=a.wt/a.lift;if(b.str===null||r<b.str)b.str=r}
+  });
+  return b;
+}
+
+function calcScores(a,bests){
+  const s={};
+  const clamp=v=>Math.min(100,Math.max(0,v));
+  if(a.acc&&bests.acc)s.acc=clamp((bests.acc/a.acc)*100);
+  if(a.spd&&bests.spd)s.spd=clamp((bests.spd/a.spd)*100);
+  if(a.agi&&bests.agi)s.agi=clamp((bests.agi/a.agi)*100);
+  if(a.vj&&bests.vj)s.vj=clamp((a.vj/bests.vj)*100);
+  if(a.bj&&bests.bj)s.bj=clamp((a.bj/bests.bj)*100);
+  if(a.coop&&bests.coop)s.coop=clamp((a.coop/bests.coop)*100);
+  if(a.fkm&&bests.fkm)s.fkm=clamp((bests.fkm/a.fkm)*100);
+  if(a.thr&&bests.thr)s.thr=clamp((a.thr/bests.thr)*100);
+  if(a.wt&&a.lift&&bests.str){const r=a.wt/a.lift;s.str=clamp((bests.str/r)*100)}
+  let total=0,wsum=0;
+  ['acc','spd','agi','vj','bj','coop','fkm','thr','str'].forEach(k=>{
+    if(s[k]!==undefined){total+=s[k]*WEIGHTS[k];wsum+=WEIGHTS[k]}
+  });
+  s.overall=wsum>0?Math.round(total/wsum):null;
+  return s;
+}
+
+function getLatestAssessment(memberId){
+  return DB.assessments.filter(a=>a.memberId===memberId).sort((a,b)=>b.date.localeCompare(a.date))[0]||null;
+}
+
+function getMemberOverallScore(memberId){
+  const a=getLatestAssessment(memberId);
+  if(!a)return null;
+  return calcScores(a,getBests()).overall;
+}
+
+function showPage(id,btn){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(btn)btn.classList.add('active');
+  if(id==='dashboard')renderDashboard();
+  if(id==='members')renderMembers();
+  if(id==='assess')populateAssessSelect();
+  if(id==='leaderboard')renderLeaderboard();
+}
+
+function renderDashboard(){
+  document.getElementById('stat-total').textContent=DB.members.length;
+  document.getElementById('stat-senior').textContent=DB.members.filter(m=>m.role==='Senior Member').length;
+  document.getElementById('stat-member').textContent=DB.members.filter(m=>m.role==='Member').length;
+  document.getElementById('stat-volunteer').textContent=DB.members.filter(m=>m.role==='Volunteer').length;
+  const scored=DB.members.map(m=>({m,score:getMemberOverallScore(m.id)})).filter(x=>x.score!==null).sort((a,b)=>b.score-a.score).slice(0,6);
+  const grid=document.getElementById('dash-top');
+  if(scored.length===0){grid.innerHTML='<div class="empty-state" style="grid-column:1/-1"><div class="icon">🏃</div><p>No assessments recorded yet.<br>Go to <strong>Assessment</strong> to add performance data.</p></div>';return}
+  grid.innerHTML=scored.map(({m,score})=>memberCardHTML(m,score)).join('');
+}
+
+function setFilter(role,btn){
+  filterRole=role;
+  document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  renderMembers();
+}
+
+function renderMembers(){
+  const q=(document.getElementById('search-input').value||'').toLowerCase();
+  let list=DB.members;
+  if(filterRole!=='All')list=list.filter(m=>m.role===filterRole);
+  if(q)list=list.filter(m=>m.name.toLowerCase().includes(q)||(m.events||'').toLowerCase().includes(q)||(m.dept||'').toLowerCase().includes(q));
+  const grid=document.getElementById('members-grid');
+  if(list.length===0){grid.innerHTML='<div class="empty-state" style="grid-column:1/-1"><div class="icon">🏃</div><p>No athletes found.<br>Click <strong>+ Add Athlete</strong> to get started.</p></div>';return}
+  grid.innerHTML=list.map(m=>memberCardHTML(m,getMemberOverallScore(m.id))).join('');
+}
+
+function memberCardHTML(m,score){
+  const roleClass={'Senior Member':'role-senior','Member':'role-member','Volunteer':'role-volunteer'}[m.role]||'role-member';
+  const tags=(m.events||'').split(',').filter(Boolean).map(e=>`<span class="event-tag">${e.trim()}</span>`).join('');
+  const scoreHTML=score!==null?`
+    <div class="score-row"><span class="score-lbl">Overall Rating</span><span class="score-val">${score}<small style="font-size:12px;color:var(--ink3)">/100</small></span></div>
+    <div class="score-bar"><div class="score-fill" style="width:${score}%"></div></div>`
+    :'<div style="font-size:12px;color:var(--ink3);margin-top:8px">No assessment yet</div>';
+  return `<div class="member-card" onclick="openDetail('${m.id}')">
+    <span class="role-badge ${roleClass}">${m.role}</span>
+    <div class="avatar">${initials(m.name)}</div>
+    <h4>${m.name}</h4>
+    <div class="sub">${m.program||''} ${m.dept?'· '+m.dept:''} ${m.jersey?'· #'+m.jersey.split('-').pop().trim():''}</div>
+    ${scoreHTML}
+    <div class="event-tags">${tags}</div>
+  </div>`;
+}
+
+function openAddMember(){
+  editingId=null;
+  document.getElementById('modal-title').textContent='Add Athlete';
+  document.getElementById('btn-delete').style.display='none';
+  ['f-name','f-dob','f-height','f-weight','f-program','f-dept','f-phone','f-email','f-pemail','f-jersey','f-events','f-comps','f-achieve','f-shoe','f-notes'].forEach(id=>{const el=document.getElementById(id);if(el)el.value=''});
+  document.getElementById('f-role').value='Member';
+  document.getElementById('f-blood').value='';
+  document.getElementById('f-join').value='';
+  setInnerTab(0,document.querySelector('.inner-tab'));
+  openModal('member-modal');
+}
+
+function openEdit(id){
+  const m=DB.members.find(x=>x.id===id);
+  if(!m)return;
+  editingId=id;
+  document.getElementById('modal-title').textContent='Edit Athlete';
+  document.getElementById('btn-delete').style.display='block';
+  const fields={name:'f-name',role:'f-role',dob:'f-dob',blood:'f-blood',height:'f-height',weight:'f-weight',program:'f-program',dept:'f-dept',phone:'f-phone',email:'f-email',pemail:'f-pemail',jersey:'f-jersey',events:'f-events',comps:'f-comps',achieve:'f-achieve',join:'f-join',shoe:'f-shoe',notes:'f-notes'};
+  Object.entries(fields).forEach(([k,fid])=>{const el=document.getElementById(fid);if(el)el.value=m[k]||''});
+  setInnerTab(0,document.querySelector('.inner-tab'));
+  openModal('member-modal');
+}
+
+function saveMember(){
+  const name=document.getElementById('f-name').value.trim();
+  if(!name){alert('Name is required');return}
+  const m={
+    id:editingId||uid(),name,
+    role:document.getElementById('f-role').value,
+    dob:document.getElementById('f-dob').value,
+    blood:document.getElementById('f-blood').value,
+    height:document.getElementById('f-height').value,
+    weight:document.getElementById('f-weight').value,
+    program:document.getElementById('f-program').value,
+    dept:document.getElementById('f-dept').value,
+    phone:document.getElementById('f-phone').value,
+    email:document.getElementById('f-email').value,
+    pemail:document.getElementById('f-pemail').value,
+    jersey:document.getElementById('f-jersey').value,
+    events:document.getElementById('f-events').value,
+    comps:document.getElementById('f-comps').value,
+    achieve:document.getElementById('f-achieve').value,
+    join:document.getElementById('f-join').value,
+    shoe:document.getElementById('f-shoe').value,
+    notes:document.getElementById('f-notes').value,
+    createdAt:editingId?(DB.members.find(x=>x.id===editingId)||{}).createdAt||new Date().toISOString():new Date().toISOString()
+  };
+  if(editingId){const i=DB.members.findIndex(x=>x.id===editingId);if(i>=0)DB.members[i]=m}
+  else DB.members.push(m);
+  saveDB();closeModal('member-modal');
+  renderMembers();renderDashboard();
+  toast(editingId?'Athlete updated ✓':'Athlete added ✓');
+}
+
+function deleteMember(){
+  if(!editingId||!confirm('Delete this athlete and all their assessments? This cannot be undone.'))return;
+  DB.members=DB.members.filter(m=>m.id!==editingId);
+  DB.assessments=DB.assessments.filter(a=>a.memberId!==editingId);
+  saveDB();closeModal('member-modal');
+  renderMembers();renderDashboard();
+  toast('Athlete deleted');
+}
+
+function openDetail(id){
+  const m=DB.members.find(x=>x.id===id);
+  if(!m)return;
+  const score=getMemberOverallScore(id);
+  const bests=getBests();
+  const assessments=DB.assessments.filter(a=>a.memberId===id).sort((a,b)=>b.date.localeCompare(a.date));
+  const latest=assessments[0]||null;
+  const scores=latest?calcScores(latest,bests):{};
+  const roleClass={'Senior Member':'role-senior','Member':'role-member','Volunteer':'role-volunteer'}[m.role]||'role-member';
+  const metricDefs=[
+    {key:'acc',label:'Acceleration (30m Sprint)'},
+    {key:'spd',label:'Top Speed (Flying 30m)'},
+    {key:'agi',label:'Agility (Illinois)'},
+    {key:'vj',label:'Vertical Jump'},
+    {key:'bj',label:'Broad Jump'},
+    {key:'coop',label:'Cooper 12-min Run'},
+    {key:'fkm',label:'5km Run'},
+    {key:'thr',label:'Medicine Ball Throw'},
+    {key:'str',label:'Strength Ratio'},
+  ];
+  const barsHTML=metricDefs.map(({key,label})=>{
+    const s=scores[key];
+    if(s===undefined)return`<div class="metric-bar-row"><div class="metric-bar-label">${label}</div><div style="font-size:12px;color:var(--ink3)">No data</div><div></div></div>`;
+    return`<div class="metric-bar-row">
+      <div class="metric-bar-label">${label}</div>
+      <div class="metric-bar-track"><div class="metric-bar-fill" style="width:${s}%"></div></div>
+      <div class="metric-bar-score">${Math.round(s)}</div>
+    </div>`;
+  }).join('');
+  const histHTML=assessments.length?assessments.slice(0,5).map(a=>{
+    const sc=calcScores(a,bests);
+    return`<li class="history-item">
+      <div><div style="font-weight:500;font-size:14px">Assessment</div><div class="history-date">${a.date}</div></div>
+      <div class="history-score">${sc.overall!==null?sc.overall+'<small style="font-size:13px;color:var(--ink3)">/100</small>':'—'}</div>
+    </li>`;
+  }).join(''):'<li style="color:var(--ink3);font-size:14px;padding:12px">No assessments yet.</li>';
+
+  document.getElementById('detail-modal-title').textContent=m.name;
+  document.getElementById('detail-modal-body').innerHTML=`
+    <div class="detail-hero">
+      <div class="detail-avatar">${initials(m.name)}</div>
+      <div class="detail-info" style="flex:1">
+        <h2>${m.name}</h2>
+        <div class="sub"><span class="role-badge ${roleClass}" style="position:static;display:inline-block">${m.role}</span> &nbsp; ${m.program||''} ${m.dept?'· '+m.dept:''}</div>
+        <div style="margin-top:8px;font-size:13px;color:#aaa">${m.events||'Events not specified'}</div>
+      </div>
+      ${score!==null?`<div class="overall-badge">${score}<span class="out">/100</span></div>`:''}
+    </div>
+    <div class="detail-meta">
+      <div class="meta-item"><div class="key">Blood Group</div><div class="val">${m.blood||'—'}</div></div>
+      <div class="meta-item"><div class="key">Height</div><div class="val">${m.height||'—'}</div></div>
+      <div class="meta-item"><div class="key">Weight</div><div class="val">${m.weight?m.weight+' kg':'—'}</div></div>
+      <div class="meta-item"><div class="key">Date of Birth</div><div class="val">${m.dob||'—'}</div></div>
+      <div class="meta-item"><div class="key">Jersey</div><div class="val">${m.jersey||'—'}</div></div>
+      <div class="meta-item"><div class="key">Joined</div><div class="val">${m.join||'—'}</div></div>
+    </div>
+    ${assessments.length?`<div class="radar-container">
+      <div class="radar-title">Latest Assessment Breakdown</div>
+      <div class="metric-bars">${barsHTML}</div>
+    </div>`:''}
+    <div style="margin-bottom:20px">
+      <div class="section-label">Assessment History</div>
+      <ul class="history-list">${histHTML}</ul>
+    </div>
+    ${m.achieve?`<div class="meta-item" style="margin-bottom:16px"><div class="key">Achievements / PB / PR</div><div class="val" style="font-size:14px;white-space:pre-wrap">${m.achieve}</div></div>`:''}
+    <div class="btn-row">
+      <button class="btn btn-secondary" onclick="closeModal('detail-modal');openEdit('${m.id}')">Edit Profile</button>
+      <button class="btn btn-primary" onclick="closeModal('detail-modal');goAssess('${m.id}')">Record Assessment</button>
+    </div>
+  `;
+  openModal('detail-modal');
+}
+
+function goAssess(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach((t,i)=>t.classList.toggle('active',i===2));
+  document.getElementById('page-assess').classList.add('active');
+  populateAssessSelect();
+  document.getElementById('assess-athlete').value=id;
+}
+
+function populateAssessSelect(){
+  const sel=document.getElementById('assess-athlete');
+  sel.innerHTML='<option value="">— choose athlete —</option>'+
+    DB.members.map(m=>`<option value="${m.id}">${m.name} (${m.role})</option>`).join('');
+}
+
+function previewScore(){
+  const fields={acc:'m-acc',spd:'m-spd',agi:'m-agi',vj:'m-vj',bj:'m-bj',coop:'m-coop',fkm:'m-5km',thr:'m-thr',wt:'m-wt',lift:'m-lift'};
+  const a={};
+  Object.entries(fields).forEach(([k,id])=>{const v=parseFloat(document.getElementById(id).value);if(!isNaN(v)&&v>0)a[k]=v});
+  const tempBests=getBests();
+  if(a.acc&&(tempBests.acc===null||a.acc<tempBests.acc))tempBests.acc=a.acc;
+  if(a.spd&&(tempBests.spd===null||a.spd<tempBests.spd))tempBests.spd=a.spd;
+  if(a.agi&&(tempBests.agi===null||a.agi<tempBests.agi))tempBests.agi=a.agi;
+  if(a.vj&&(tempBests.vj===null||a.vj>tempBests.vj))tempBests.vj=a.vj;
+  if(a.bj&&(tempBests.bj===null||a.bj>tempBests.bj))tempBests.bj=a.bj;
+  if(a.coop&&(tempBests.coop===null||a.coop>tempBests.coop))tempBests.coop=a.coop;
+  if(a.fkm&&(tempBests.fkm===null||a.fkm<tempBests.fkm))tempBests.fkm=a.fkm;
+  if(a.thr&&(tempBests.thr===null||a.thr>tempBests.thr))tempBests.thr=a.thr;
+  if(a.wt&&a.lift){const r=a.wt/a.lift;if(tempBests.str===null||r<tempBests.str)tempBests.str=r}
+  const sc=calcScores(a,tempBests);
+  if(sc.overall!==null){
+    document.getElementById('preview-score').textContent=sc.overall;
+    const names={acc:'Acc',spd:'Spd',agi:'Agi',vj:'VJ',bj:'BJ',coop:'Cooper',fkm:'5km',thr:'Throw',str:'Str'};
+    document.getElementById('preview-breakdown').textContent=Object.entries(names).filter(([k])=>sc[k]!==undefined).map(([k,n])=>`${n}:${Math.round(sc[k])}`).join(' · ');
+  } else {
+    document.getElementById('preview-score').textContent='—';
+    document.getElementById('preview-breakdown').textContent='Enter metrics above to see breakdown';
+  }
+}
+
+function saveAssessment(){
+  const memberId=document.getElementById('assess-athlete').value;
+  const date=document.getElementById('assess-date').value;
+  if(!memberId){alert('Please select an athlete');return}
+  if(!date){alert('Please select a date');return}
+  const fields={acc:'m-acc',spd:'m-spd',agi:'m-agi',vj:'m-vj',bj:'m-bj',coop:'m-coop',fkm:'m-5km',thr:'m-thr',wt:'m-wt',lift:'m-lift'};
+  const a={id:uid(),memberId,date};
+  Object.entries(fields).forEach(([k,id])=>{const v=parseFloat(document.getElementById(id).value);if(!isNaN(v)&&v>0)a[k]=v});
+  if(Object.keys(a).length<=3){alert('Please enter at least one metric value');return}
+  DB.assessments.push(a);
+  saveDB();
+  ['m-acc','m-spd','m-agi','m-vj','m-bj','m-coop','m-5km','m-thr','m-wt','m-lift'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('assess-athlete').value='';
+  document.getElementById('assess-date').value='';
+  document.getElementById('preview-score').textContent='—';
+  document.getElementById('preview-breakdown').textContent='Enter metrics above to see breakdown';
+  toast('Assessment saved ✓');
+}
+
+function renderLeaderboard(){
+  const roleFilter=document.getElementById('lb-filter').value;
+  let list=DB.members;
+  if(roleFilter!=='All')list=list.filter(m=>m.role===roleFilter);
+  const scored=list.map(m=>({m,score:getMemberOverallScore(m.id)})).sort((a,b)=>{
+    if(a.score===null&&b.score===null)return 0;
+    if(a.score===null)return 1;
+    if(b.score===null)return -1;
+    return b.score-a.score;
+  });
+  const table=document.getElementById('lb-table');
+  if(scored.length===0){table.innerHTML='<div class="empty-state"><div class="icon">🏆</div><p>No athletes yet.</p></div>';return}
+  table.innerHTML=`<div class="lb-row header" style="cursor:default">
+    <div>#</div><div>Athlete</div><div style="text-align:center">Score</div><div style="text-align:center">Dept</div><div style="text-align:center">Blood</div>
+  </div>`+scored.map(({m,score},i)=>{
+    const rc=i===0?'r1':i===1?'r2':i===2?'r3':'';
+    const rowc=i===0?'top1':i===1?'top2':i===2?'top3':'';
+    const badge={'Senior Member':'role-senior','Member':'role-member','Volunteer':'role-volunteer'}[m.role]||'role-member';
+    return`<div class="lb-row ${rowc}" onclick="openDetail('${m.id}')">
+      <div class="rank ${rc}">${i+1}</div>
+      <div><div class="lb-name">${m.name}</div><div class="lb-sub"><span class="role-badge ${badge}" style="position:static;display:inline-block">${m.role}</span> ${m.events?'· '+m.events.split(',')[0].trim():''}</div></div>
+      <div class="lb-score" style="color:var(--gold)">${score!==null?score:'—'}</div>
+      <div style="font-size:12px;color:var(--ink3);text-align:center">${m.dept||''}</div>
+      <div style="font-size:12px;color:var(--ink3);text-align:center">${m.blood||''}</div>
+    </div>`;
+  }).join('');
+}
+
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+document.querySelectorAll('.modal-overlay').forEach(o=>o.addEventListener('click',e=>{if(e.target===o)o.classList.remove('open')}));
+
+function setInnerTab(idx,btn){
+  document.querySelectorAll('.inner-tab').forEach((t,i)=>t.classList.toggle('active',i===idx));
+  document.getElementById('inner-panel-0').style.display=idx===0?'block':'none';
+  document.getElementById('inner-panel-1').style.display=idx===1?'block':'none';
+}
+
+// init
+loadDB();
+renderDashboard();
+document.getElementById('assess-date').valueAsDate=new Date();
+
+// seed demo data if empty
+if(DB.members.length===0){
+  const demo=[
+    {id:'m1',name:'Mukul Raj Ghunawat',role:'Senior Member',dob:'2005-02-07',blood:'AB+',height:"5'7\"",weight:'71',program:'BTech',dept:'Mechanical',phone:'9057569419',email:'me220003055@iiti.ac.in',jersey:'Kevin - 55',events:'Sprinter',join:'2023-03-01',createdAt:new Date().toISOString()},
+    {id:'m2',name:'Durvesh Umesh Goyal',role:'Member',dob:'2006-12-27',blood:'B+',height:'6ft',weight:'53',program:'BTech',dept:'Mechanical Engineering',jersey:'18',events:'Mid Distance Runner',createdAt:new Date().toISOString()},
+    {id:'m3',name:'Ganesh Sidar',role:'Senior Member',dob:'2000-10-20',blood:'O+',height:"6'1\"",weight:'77',program:'PhD',dept:'CSE',phone:'7722931858',email:'phd2501201005@iiti.ac.in',jersey:'Ganesh - 3',events:'Jumper, Thrower',createdAt:new Date().toISOString()},
+    {id:'m4',name:'Keerthi K',role:'Member',dob:'1998-10-29',blood:'O+',height:"5'4\"",weight:'47',program:'PhD',dept:'DAASE',jersey:'Keerthi - 36',events:'Sprinter',createdAt:new Date().toISOString()},
+  ];
+  DB.members=demo;
+  DB.assessments=[
+    {id:'a1',memberId:'m1',date:'2025-06-01',acc:4.25,spd:3.15,agi:15.8,vj:62,bj:2.45,coop:2900,fkm:1350,thr:9.2,wt:71,lift:85},
+    {id:'a2',memberId:'m3',date:'2025-06-01',acc:4.10,spd:3.05,agi:14.9,vj:72,bj:2.65,coop:3100,fkm:1290,thr:11.5,wt:77,lift:90},
+    {id:'a3',memberId:'m2',date:'2025-06-01',acc:4.55,spd:3.40,agi:16.2,vj:55,bj:2.20,coop:2600,fkm:1450,thr:7.8,wt:53,lift:60},
+    {id:'a4',memberId:'m4',date:'2025-06-01',acc:4.80,spd:3.70,agi:17.1,vj:48,bj:1.95,coop:2400,fkm:1520,thr:6.5,wt:47,lift:50},
+  ];
+  saveDB();
+  renderDashboard();
+}
+</script>
+</body>
+</html>
