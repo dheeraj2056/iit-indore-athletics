@@ -759,19 +759,32 @@ function openMyProfile(){
   const username =
     localStorage.getItem("username");
 
-  const me = DB.members.find(
+  let me = DB.members.find(
     m => (m.email || "").toLowerCase() ===
          username.toLowerCase()
   );
 
-  if(!me){
-    alert("Profile not found");
+  if(me){
+    openDetail(me.id);
     return;
   }
 
-  openDetail(me.id);
-}
-function changePassword(){
+  // No profile found -> open Add/Edit form automatically
+
+  editingId = null;
+
+  openAddMember();
+
+  document.getElementById("f-email").value =
+    username;
+
+  document.getElementById("f-name").focus();
+
+  alert(
+    "Welcome! Please complete your profile."
+  );
+
+}function changePassword(){
 
   const oldPassword =
     prompt("Enter current password");
