@@ -12,21 +12,35 @@ with app.app_context():
 
     db.create_all()
 
-    admin = User.query.filter_by(
-        username="admin"
-    ).first()
+    default_users = [
 
-    if not admin:
+        ("coach1", "samsir", "coach"),
+        ("coach2", "baggasir", "coach"),
 
-        admin = User(
-            username="admin",
-            password="admin123",
-            role="admin"
-        )
+        ("clubhead", "ayushraj", "head"),
+        ("cohead", "prachi", "cohead"),
 
-        db.session.add(admin)
-        db.session.commit()
+        ("mentor", "jagrit", "mentor")
 
+    ]
+
+    for username, password, role in default_users:
+
+        existing = User.query.filter_by(
+            username=username
+        ).first()
+
+        if not existing:
+
+            user = User(
+                username=username,
+                password=password,
+                role=role
+            )
+
+            db.session.add(user)
+
+    db.session.commit()
 
 @app.route("/")
 def home():
