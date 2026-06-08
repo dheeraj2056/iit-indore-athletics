@@ -11,25 +11,26 @@ with app.app_context():
 
     db.create_all()
 
+
+
     default_users = [
 
     ("coach1", "samsir", "coach"),
     ("coach2", "baggasir", "coach"),
 
-    ("ep230051005@iiti.ac.in", "temp123", "head"),
+    ("mems250005013@iiti.ac.in", "temp123", "head"),
     ("me240003066@iiti.ac.in", "temp123", "cohead"),
-    ("me240003057@iiti.ac.in", "temp123", "mentor"),
+    ("ep230051005@iiti.ac.in", "temp123", "mentor"),
 
     ("ee220002023@iiti.ac.in", "temp123", "athlete"),
     ("me220003055@iiti.ac.in", "temp123", "athlete"),
     ("phd1901261005@iiti.ac.in", "temp123", "athlete"),
 
+    ("me240003057@iiti.ac.in", "temp123", "athlete"),
     ("ee240002068@iiti.ac.in", "temp123", "athlete"),
     ("phd2301121009@iiti.ac.in", "temp123", "athlete"),
 
-    ("mems250005013@iiti.ac.in", "temp123", "athlete"),
     ("cse250001022@iiti.ac.in", "temp123", "athlete"),
-
     ("me250003064@iiti.ac.in", "temp123", "athlete"),
     ("me250003033@iiti.ac.in", "temp123", "athlete"),
 
@@ -41,6 +42,7 @@ with app.app_context():
     ("phd2501201005@iiti.ac.in", "temp123", "athlete"),
     ("mt2502171025@iiti.ac.in", "temp123", "athlete"),
     ("me250003079@iiti.ac.in", "temp123", "athlete"),
+    ("ms2504101006@iiti.ac.in","temp123","athlete"),
 ]
 
     for username, password, role in default_users:
