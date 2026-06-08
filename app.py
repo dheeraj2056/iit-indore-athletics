@@ -1,6 +1,6 @@
 from flask import Flask, render_template, request, jsonify
 from config import Config
-from models import db, Athlete, Assessment
+from models import db, Athlete, Assessment, User
 
 app = Flask(__name__)
 
@@ -9,12 +9,54 @@ app.config.from_object(Config)
 db.init_app(app)
 
 with app.app_context():
+
     db.create_all()
+
+    admin = User.query.filter_by(
+        username="admin"
+    ).first()
+
+    if not admin:
+
+        admin = User(
+            username="admin",
+            password="admin123",
+            role="admin"
+        )
+
+        db.session.add(admin)
+        db.session.commit()
 
 
 @app.route("/")
 def home():
     return render_template("index.html")
+
+
+# =====================================
+# LOGIN
+# =====================================
+
+@app.route("/api/login", methods=["POST"])
+def login():
+
+    data = request.json
+
+    user = User.query.filter_by(
+        username=data.get("username"),
+        password=data.get("password")
+    ).first()
+
+    if not user:
+
+        return jsonify({
+            "success": False
+        })
+
+    return jsonify({
+        "success": True,
+        "role": user.role
+    })
 
 
 # =====================================
@@ -40,7 +82,7 @@ def get_athletes():
             "weight": a.weight,
 
             "program": a.program,
-            "department": a.department,
+            "dept": a.department,
 
             "phone": a.phone,
             "email": a.email,
@@ -77,7 +119,7 @@ def add_athlete():
         weight=data.get("weight"),
 
         program=data.get("program"),
-        department=data.get("department"),
+        department=data.get("dept"),
 
         phone=data.get("phone"),
         email=data.get("email"),
@@ -121,7 +163,7 @@ def update_athlete(id):
     athlete.weight = data.get("weight", athlete.weight)
 
     athlete.program = data.get("program", athlete.program)
-    athlete.department = data.get("department", athlete.department)
+    athlete.department = data.get("dept", athlete.department)
 
     athlete.phone = data.get("phone", athlete.phone)
     athlete.email = data.get("email", athlete.email)
@@ -140,7 +182,9 @@ def update_athlete(id):
 
     db.session.commit()
 
-    return jsonify({"success": True})
+    return jsonify({
+        "success": True
+    })
 
 
 @app.route("/api/athletes/<int:id>", methods=["DELETE"])
@@ -151,7 +195,9 @@ def delete_athlete(id):
     db.session.delete(athlete)
     db.session.commit()
 
-    return jsonify({"success": True})
+    return jsonify({
+        "success": True
+    })
 
 
 # =====================================
@@ -167,7 +213,7 @@ def get_assessments():
         {
             "id": a.id,
 
-            "athlete_id": a.athlete_id,
+            "memberId": a.athlete_id,
             "date": a.date,
 
             "acc": a.acc,
@@ -217,7 +263,9 @@ def add_assessment():
     db.session.add(assessment)
     db.session.commit()
 
-    return jsonify({"success": True})
+    return jsonify({
+        "success": True
+    })
 
 
 @app.route("/api/assessments/<int:id>", methods=["DELETE"])
@@ -228,7 +276,9 @@ def delete_assessment(id):
     db.session.delete(assessment)
     db.session.commit()
 
-    return jsonify({"success": True})
+    return jsonify({
+        "success": True
+    })
 
 
 if __name__ == "__main__":

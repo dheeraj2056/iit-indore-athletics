@@ -2,6 +2,7 @@ from flask_sqlalchemy import SQLAlchemy
 
 db = SQLAlchemy()
 
+
 class Athlete(db.Model):
     __tablename__ = "athletes"
 
@@ -33,6 +34,8 @@ class Athlete(db.Model):
     shoe = db.Column(db.String(20))
 
     notes = db.Column(db.Text)
+
+
 class Assessment(db.Model):
     __tablename__ = "assessments"
 
@@ -56,3 +59,14 @@ class Assessment(db.Model):
 
     wt = db.Column(db.Float)
     lift = db.Column(db.Float)
+
+
+class User(db.Model):
+    __tablename__ = "users"
+
+    id = db.Column(db.Integer, primary_key=True)
+
+    username = db.Column(db.String(50), unique=True)
+    password = db.Column(db.String(200))
+
+    role = db.Column(db.String(20))
