@@ -47,9 +47,35 @@ h1,h2,h3,h4{font-family:'Oswald',sans-serif;font-weight:600;letter-spacing:0.02e
 .member-card{background:var(--surface3);border:1px solid var(--border);border-radius:10px;padding:18px;cursor:pointer;transition:all .2s;position:relative}
 .member-card:hover{border-color:var(--gold);transform:translateY(-1px)}
 .member-card .role-badge{position:absolute;top:14px;right:14px;font-size:11px;padding:3px 8px;border-radius:12px;font-weight:500;text-transform:uppercase;letter-spacing:.04em}
-.role-senior{background:#FFF3CD;color:#856404}
-.role-member{background:#D1ECF1;color:#0C5460}
-.role-volunteer{background:#D4EDDA;color:#155724}
+.role-clubhead{
+  background:#f59e0b;
+  color:white;
+}
+
+.role-cohead{
+  background:#7c3aed;
+  color:white;
+}
+
+.role-mentor{
+  background:#06b6d4;
+  color:white;
+}
+
+.role-senior{
+  background:#2563eb;
+  color:white;
+}
+
+.role-member{
+  background:#16a34a;
+  color:white;
+}
+
+.role-volunteer{
+  background:#ea580c;
+  color:white;
+}
 .avatar{width:44px;height:44px;border-radius:50%;background:var(--gold-light);display:flex;align-items:center;justify-content:center;font-family:'Oswald',sans-serif;font-size:16px;font-weight:600;color:var(--gold-dark);margin-bottom:12px;border:2px solid var(--border)}
 .member-card h4{font-size:15px;font-weight:500;margin-bottom:2px;color:var(--ink);font-family:'Oswald',sans-serif}
 .member-card .sub{font-size:12px;color:var(--ink3);margin-bottom:10px}
@@ -165,18 +191,19 @@ textarea{resize:vertical;min-height:60px}
 
 <div class="topbar">
   <div class="logo">IITI <span>Athletics</span></div>
-  <div class="nav-tabs">
+
+  <div class="nav-tabs" id="nav-tabs">
     <button class="nav-tab active" onclick="showPage('dashboard',this)">Dashboard</button>
     <button class="nav-tab" onclick="showPage('members',this)">Athletes</button>
     <button class="nav-tab" onclick="showPage('assess',this)">Assessment</button>
     <button class="nav-tab" onclick="showPage('leaderboard',this)">Leaderboard</button>
   </div>
-  <div class="topbar-actions">
+
+  <div class="topbar-actions" id="topbar-actions">
     <button class="btn btn-secondary" onclick="logout()" style="font-size:13px">Logout</button>
     <button class="btn btn-primary" onclick="openAddMember()">+ Add Athlete</button>
   </div>
 </div>
-
 <!-- DASHBOARD -->
 <div class="page active" id="page-dashboard">
   <div class="hero">
@@ -200,10 +227,19 @@ textarea{resize:vertical;min-height:60px}
     <input class="search-input" placeholder="Search by name, event..." id="search-input" oninput="renderMembers()">
   </div>
   <div class="filter-row">
-    <button class="filter-btn active" onclick="setFilter('All',this)">All</button>
-    <button class="filter-btn" onclick="setFilter('Senior Member',this)">Senior Members</button>
-    <button class="filter-btn" onclick="setFilter('Member',this)">Members</button>
-    <button class="filter-btn" onclick="setFilter('Volunteer',this)">Volunteers</button>
+   <button class="filter-btn active" onclick="setFilter('All',this)">All</button>
+
+<button class="filter-btn" onclick="setFilter('Club Head',this)">Club Head</button>
+
+<button class="filter-btn" onclick="setFilter('Co-Head',this)">Co-Head</button>
+
+<button class="filter-btn" onclick="setFilter('Mentor',this)">Mentor</button>
+
+<button class="filter-btn" onclick="setFilter('Senior Member',this)">Senior Members</button>
+
+<button class="filter-btn" onclick="setFilter('Member',this)">Members</button>
+
+<button class="filter-btn" onclick="setFilter('Volunteer',this)">Volunteers</button>
   </div>
   <div class="member-grid" id="members-grid"></div>
 </div>
@@ -259,9 +295,12 @@ textarea{resize:vertical;min-height:60px}
     <div class="section-title">Overall Leaderboard</div>
     <select id="lb-filter" onchange="renderLeaderboard()" style="padding:7px 12px;border:1px solid var(--border);border-radius:6px;font-family:'DM Sans',sans-serif;font-size:13px;background:var(--surface3)">
       <option value="All">All Members</option>
-      <option value="Senior Member">Senior Members</option>
-      <option value="Member">Members</option>
-      <option value="Volunteer">Volunteers</option>
+<option value="Club Head">Club Head</option>
+<option value="Co-Head">Co-Head</option>
+<option value="Mentor">Mentor</option>
+<option value="Senior Member">Senior Members</option>
+<option value="Member">Members</option>
+<option value="Volunteer">Volunteers</option>
     </select>
   </div>
   <div class="leaderboard" id="lb-table"></div>
@@ -386,25 +425,74 @@ function getMemberOverallScore(memberId){
 
 // LOGIN / LOGOUT
 async function login(){
-  const username=document.getElementById('login-username').value.trim();
-  const password=document.getElementById('login-password').value;
-  document.getElementById('login-error').textContent='';
-  try{
-    const res=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username,password})});
-    const result=await res.json();
-    if(result.success){
-      localStorage.setItem('loggedIn','true');
-      document.getElementById('login-screen').style.display='none';
-      document.getElementById('main-app').style.display='block';
-      await initializeApp();
-    }else{
-      document.getElementById('login-error').textContent='Invalid username or password';
-    }
-  }catch(err){
-    document.getElementById('login-error').textContent='Server error. Try again.';
-  }
-}
 
+  const username =
+    document.getElementById('login-username').value.trim();
+
+  const password =
+    document.getElementById('login-password').value;
+
+  document.getElementById('login-error').textContent='';
+
+  try{
+
+    const res = await fetch('/api/login', {
+      method:'POST',
+      headers:{
+        'Content-Type':'application/json'
+      },
+      body:JSON.stringify({
+        username,
+        password
+      })
+    });
+
+    const result = await res.json();
+
+    if(result.success){
+
+      localStorage.setItem(
+        'loggedIn',
+        'true'
+      );
+
+      localStorage.setItem(
+        'role',
+        result.role
+      );
+
+      localStorage.setItem(
+        'username',
+        username
+      );
+
+      document.getElementById(
+        'login-screen'
+      ).style.display='none';
+
+      document.getElementById(
+        'main-app'
+      ).style.display='block';
+
+      await initializeApp();
+
+    }else{
+
+      document.getElementById(
+        'login-error'
+      ).textContent='Invalid username or password';
+
+    }
+
+  }catch(err){
+
+    document.getElementById(
+      'login-error'
+    ).textContent='Server error. Try again.';
+
+  }
+
+}
 function logout(){
   localStorage.removeItem('loggedIn');
   document.getElementById('main-app').style.display='none';
@@ -422,17 +510,67 @@ async function loadAssessmentsFromServer(){
   const res=await fetch('/api/assessments');
   DB.assessments=await res.json();
 }
+
 async function initializeApp(){
+
+  const role = localStorage.getItem("role");
+
+  if(role === "athlete"){
+
+    const nav = document.getElementById("nav-tabs");
+
+    if(nav){
+     nav.innerHTML = `
+  <button class="nav-tab active"
+    onclick="showPage('dashboard',this)">
+    Dashboard
+  </button>
+
+  <button class="nav-tab"
+    onclick="openMyProfile()">
+    My Profile
+  </button>
+
+  <button class="nav-tab"
+    onclick="showPage('leaderboard',this)">
+    Leaderboard
+  </button>
+`;
+    }
+
+    const actions = document.getElementById("topbar-actions");
+
+    if(actions){
+      actions.innerHTML = `
+        <button class="btn btn-secondary"
+          onclick="logout()"
+          style="font-size:13px">
+          Logout
+        </button>
+      `;
+    }
+  }
+
   await loadAthletesFromServer();
   await loadAssessmentsFromServer();
   renderDashboard();
   renderLeaderboard();
   populateAssessSelect();
-  document.getElementById('assess-date').valueAsDate=new Date();
-}
 
+  document.getElementById('assess-date').valueAsDate =
+    new Date();
+}
 // PAGES
 function showPage(id,btn){
+const role = localStorage.getItem("role");
+
+if(role === "athlete"){
+
+  if(id === "members" || id === "assess"){
+    return;
+  }
+
+}
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
@@ -445,9 +583,23 @@ function showPage(id,btn){
 
 function renderDashboard(){
   document.getElementById('stat-total').textContent=DB.members.length;
-  document.getElementById('stat-senior').textContent=DB.members.filter(m=>m.role==='Senior Member').length;
-  document.getElementById('stat-member').textContent=DB.members.filter(m=>m.role==='Member').length;
-  document.getElementById('stat-volunteer').textContent=DB.members.filter(m=>m.role==='Volunteer').length;
+  document.getElementById('stat-senior').textContent =
+DB.members.filter(
+m => m.role==='Club Head' ||
+     m.role==='Co-Head' ||
+     m.role==='Mentor'
+).length;
+
+document.getElementById('stat-member').textContent =
+DB.members.filter(
+m => m.role==='Senior Member' ||
+     m.role==='Member'
+).length;
+
+document.getElementById('stat-volunteer').textContent =
+DB.members.filter(
+m => m.role==='Volunteer'
+).length;
   const scored=DB.members.map(m=>({m,score:getMemberOverallScore(m.id)})).filter(x=>x.score!==null).sort((a,b)=>b.score-a.score).slice(0,6);
   const grid=document.getElementById('dash-top');
   if(scored.length===0){grid.innerHTML='<div class="empty-state" style="grid-column:1/-1"><div class="icon">&#127939;</div><p>No assessments recorded yet.<br>Go to <strong>Assessment</strong> to add performance data.</p></div>';return}
@@ -472,7 +624,21 @@ function renderMembers(){
 }
 
 function memberCardHTML(m,score){
-  const roleClass={'Senior Member':'role-senior','Member':'role-member','Volunteer':'role-volunteer'}[m.role]||'role-member';
+  const roleClass={
+
+ 'Club Head':'role-clubhead',
+
+ 'Co-Head':'role-cohead',
+
+ 'Mentor':'role-mentor',
+
+ 'Senior Member':'role-senior',
+
+ 'Member':'role-member',
+
+ 'Volunteer':'role-volunteer'
+
+}[m.role] || 'role-member';
   const tags=(m.events||'').split(',').filter(Boolean).map(e=>'<span class="event-tag">'+e.trim()+'</span>').join('');
   const scoreHTML=score!==null?
     '<div class="score-row"><span class="score-lbl">Overall Rating</span><span class="score-val">'+score+'<small style="font-size:12px;color:var(--ink3)">/100</small></span></div><div class="score-bar"><div class="score-fill" style="width:'+score+'%"></div></div>'
@@ -548,13 +714,28 @@ async function deleteMember(){
 
 function openDetail(id){
   const m=DB.members.find(x=>String(x.id)===String(id));
+  const role = localStorage.getItem("role");
   if(!m)return;
   const score=getMemberOverallScore(id);
   const bests=getBests();
   const assessments=DB.assessments.filter(a=>String(a.memberId)===String(id)).sort((a,b)=>b.date.localeCompare(a.date));
   const latest=assessments[0]||null;
   const scores=latest?calcScores(latest,bests):{};
-  const roleClass={'Senior Member':'role-senior','Member':'role-member','Volunteer':'role-volunteer'}[m.role]||'role-member';
+  const roleClass={
+
+ 'Club Head':'role-clubhead',
+
+ 'Co-Head':'role-cohead',
+
+ 'Mentor':'role-mentor',
+
+ 'Senior Member':'role-senior',
+
+ 'Member':'role-member',
+
+ 'Volunteer':'role-volunteer'
+
+}[m.role] || 'role-member';
   const metricDefs=[{key:'acc',label:'Acceleration (30m Sprint)'},{key:'spd',label:'Top Speed (Flying 30m)'},{key:'agi',label:'Agility (Illinois)'},{key:'vj',label:'Vertical Jump'},{key:'bj',label:'Broad Jump'},{key:'coop',label:'Cooper 12-min Run'},{key:'fkm',label:'5km Run'},{key:'thr',label:'Medicine Ball Throw'},{key:'str',label:'Strength Ratio'}];
   const barsHTML=metricDefs.map(({key,label})=>{
     const s=scores[key];
@@ -563,8 +744,73 @@ function openDetail(id){
   }).join('');
   const histHTML=assessments.length?assessments.slice(0,5).map(a=>{const sc=calcScores(a,bests);return'<li class="history-item"><div><div style="font-weight:500;font-size:14px">Assessment</div><div class="history-date">'+a.date+'</div></div><div class="history-score">'+(sc.overall!==null?sc.overall+'<small style="font-size:13px;color:var(--ink3)">/100</small>':'—')+'</div></li>';}).join(''):'<li style="color:var(--ink3);font-size:14px;padding:12px">No assessments yet.</li>';
   document.getElementById('detail-modal-title').textContent=m.name;
-  document.getElementById('detail-modal-body').innerHTML='<div class="detail-hero"><div class="detail-avatar">'+initials(m.name)+'</div><div class="detail-info" style="flex:1"><h2>'+m.name+'</h2><div class="sub"><span class="role-badge '+roleClass+'" style="position:static;display:inline-block">'+m.role+'</span> &nbsp; '+(m.program||'')+' '+(m.dept?'&middot; '+m.dept:'')+'</div><div style="margin-top:8px;font-size:13px;color:#aaa">'+(m.events||'Events not specified')+'</div></div>'+(score!==null?'<div class="overall-badge">'+score+'<span class="out">/100</span></div>':'')+'</div><div class="detail-meta"><div class="meta-item"><div class="key">Blood Group</div><div class="val">'+(m.blood||'—')+'</div></div><div class="meta-item"><div class="key">Height</div><div class="val">'+(m.height||'—')+'</div></div><div class="meta-item"><div class="key">Weight</div><div class="val">'+(m.weight?m.weight+' kg':'—')+'</div></div><div class="meta-item"><div class="key">Date of Birth</div><div class="val">'+(m.dob||'—')+'</div></div><div class="meta-item"><div class="key">Jersey</div><div class="val">'+(m.jersey||'—')+'</div></div><div class="meta-item"><div class="key">Joined</div><div class="val">'+(m.join||'—')+'</div></div></div>'+(assessments.length?'<div class="radar-container"><div class="radar-title">Latest Assessment Breakdown</div><div class="metric-bars">'+barsHTML+'</div></div>':'')+'<div style="margin-bottom:20px"><div class="section-label">Assessment History</div><ul class="history-list">'+histHTML+'</ul></div>'+(m.achieve?'<div class="meta-item" style="margin-bottom:16px"><div class="key">Achievements / PB / PR</div><div class="val" style="font-size:14px;white-space:pre-wrap">'+m.achieve+'</div></div>':'')+'<div class="btn-row"><button class="btn btn-secondary" onclick="closeModal(\'detail-modal\');openEdit(\''+m.id+'\')">Edit Profile</button><button class="btn btn-primary" onclick="closeModal(\'detail-modal\');goAssess(\''+m.id+'\')">Record Assessment</button></div>';
+  document.getElementById('detail-modal-body').innerHTML='<div class="detail-hero"><div class="detail-avatar">'+initials(m.name)+'</div><div class="detail-info" style="flex:1"><h2>'+m.name+'</h2><div class="sub"><span class="role-badge '+roleClass+'" style="position:static;display:inline-block">'+m.role+'</span> &nbsp; '+(m.program||'')+' '+(m.dept?'&middot; '+m.dept:'')+'</div><div style="margin-top:8px;font-size:13px;color:#aaa">'+(m.events||'Events not specified')+'</div></div>'+(score!==null?'<div class="overall-badge">'+score+'<span class="out">/100</span></div>':'')+'</div><div class="detail-meta"><div class="meta-item"><div class="key">Blood Group</div><div class="val">'+(m.blood||'—')+'</div></div><div class="meta-item"><div class="key">Height</div><div class="val">'+(m.height||'—')+'</div></div><div class="meta-item"><div class="key">Weight</div><div class="val">'+(m.weight?m.weight+' kg':'—')+'</div></div><div class="meta-item"><div class="key">Date of Birth</div><div class="val">'+(m.dob||'—')+'</div></div><div class="meta-item"><div class="key">Jersey</div><div class="val">'+(m.jersey||'—')+'</div></div><div class="meta-item"><div class="key">Joined</div><div class="val">'+(m.join||'—')+'</div></div></div>'+(assessments.length?'<div class="radar-container"><div class="radar-title">Latest Assessment Breakdown</div><div class="metric-bars">'+barsHTML+'</div></div>':'')+'<div style="margin-bottom:20px"><div class="section-label">Assessment History</div><ul class="history-list">'+histHTML+'</ul></div>'+(m.achieve?'<div class="meta-item" style="margin-bottom:16px"><div class="key">Achievements / PB / PR</div><div class="val" style="font-size:14px;white-space:pre-wrap">'+m.achieve+'</div></div>':'')+
+(
+role === "athlete"
+?
+'<div class="btn-row"><button class="btn btn-secondary" onclick="closeModal(\'detail-modal\');openEdit(\''+m.id+'\')">Edit Profile</button><button class="btn btn-primary" onclick="changePassword()">Change Password</button></div>'
+:
+'<div class="btn-row"><button class="btn btn-secondary" onclick="closeModal(\'detail-modal\');openEdit(\''+m.id+'\')">Edit Profile</button><button class="btn btn-primary" onclick="closeModal(\'detail-modal\');goAssess(\''+m.id+'\')">Record Assessment</button><button class="btn btn-primary" onclick="changePassword()">Change Password</button></div>'
+);
   openModal('detail-modal');
+}
+function openMyProfile(){
+
+  const username =
+    localStorage.getItem("username");
+
+  const me = DB.members.find(
+    m => (m.email || "").toLowerCase() ===
+         username.toLowerCase()
+  );
+
+  if(!me){
+    alert("Profile not found");
+    return;
+  }
+
+  openDetail(me.id);
+}
+function changePassword(){
+
+  const oldPassword =
+    prompt("Enter current password");
+
+  if(!oldPassword) return;
+
+  const newPassword =
+    prompt("Enter new password");
+
+  if(!newPassword) return;
+
+  const confirmPassword =
+    prompt("Confirm new password");
+
+  if(confirmPassword !== newPassword){
+    alert("Passwords do not match");
+    return;
+  }
+
+  fetch("/api/change-password",{
+    method:"POST",
+    headers:{
+      "Content-Type":"application/json"
+    },
+    body:JSON.stringify({
+      username:localStorage.getItem("username"),
+      old_password:oldPassword,
+      new_password:newPassword
+    })
+  })
+  .then(r=>r.json())
+  .then(data=>{
+    if(data.success){
+      alert("Password changed successfully");
+    }else{
+      alert("Current password incorrect");
+    }
+  });
+
 }
 
 function goAssess(id){

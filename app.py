@@ -7,22 +7,41 @@ app = Flask(__name__)
 app.config.from_object(Config)
 
 db.init_app(app)
-
 with app.app_context():
 
     db.create_all()
 
     default_users = [
 
-        ("coach1", "samsir", "coach"),
-        ("coach2", "baggasir", "coach"),
+    ("coach1", "samsir", "coach"),
+    ("coach2", "baggasir", "coach"),
 
-        ("clubhead", "ayushraj", "head"),
-        ("cohead", "prachi", "cohead"),
+    ("ep230051005@iiti.ac.in", "temp123", "head"),
+    ("me240003066@iiti.ac.in", "temp123", "cohead"),
+    ("me240003057@iiti.ac.in", "temp123", "mentor"),
 
-        ("mentor", "jagrit", "mentor")
+    ("ee220002023@iiti.ac.in", "temp123", "athlete"),
+    ("me220003055@iiti.ac.in", "temp123", "athlete"),
+    ("phd1901261005@iiti.ac.in", "temp123", "athlete"),
 
-    ]
+    ("ee240002068@iiti.ac.in", "temp123", "athlete"),
+    ("phd2301121009@iiti.ac.in", "temp123", "athlete"),
+
+    ("mems250005013@iiti.ac.in", "temp123", "athlete"),
+    ("cse250001022@iiti.ac.in", "temp123", "athlete"),
+
+    ("me250003064@iiti.ac.in", "temp123", "athlete"),
+    ("me250003033@iiti.ac.in", "temp123", "athlete"),
+
+    ("mc250041012@iiti.ac.in", "temp123", "athlete"),
+
+    ("me250003018@iiti.ac.in", "temp123", "athlete"),
+    ("me250003012@iiti.ac.in", "temp123", "athlete"),
+
+    ("phd2501201005@iiti.ac.in", "temp123", "athlete"),
+    ("mt2502171025@iiti.ac.in", "temp123", "athlete"),
+    ("me250003079@iiti.ac.in", "temp123", "athlete"),
+]
 
     for username, password, role in default_users:
 
@@ -70,6 +89,33 @@ def login():
     return jsonify({
         "success": True,
         "role": user.role
+    })
+@app.route("/api/change-password", methods=["POST"])
+def change_password():
+
+    data = request.json
+
+    username = data.get("username")
+    old_password = data.get("old_password")
+    new_password = data.get("new_password")
+
+    user = User.query.filter_by(
+        username=username,
+        password=old_password
+    ).first()
+
+    if not user:
+        return jsonify({
+            "success": False,
+            "message": "Wrong password"
+        })
+
+    user.password = new_password
+
+    db.session.commit()
+
+    return jsonify({
+        "success": True
     })
 
 
